@@ -1,16 +1,14 @@
 # sigaa-crawler
 
-Gera PDFs com evidências de atividades docentes a partir do SIGAA UFCG, sem
-navegação manual. Cada funcionalidade é um subcomando:
+Crawler para ajudar na coleta de declarações/comprovações para progressão da UFCG.
+
+Cada funcionalidade é um subcomando:
 
 - `turmas`: Relatórios de Turmas (Ensino → Consulta → Turmas) do período
   inicial até o período atual, capturando a tela real do SIGAA.
 - `orientacoes-pibic`: Declarações de Orientação de iniciação científica
   (Pesquisa → Declarações → Declaração de Orientações) com algum bolsista
   ativo entre o início do período inicial e hoje.
-
-Veja [CONTEXT.md](./CONTEXT.md) para o glossário do domínio e as decisões
-já descartadas durante o design.
 
 ## Pré-requisitos
 
@@ -45,7 +43,7 @@ SIGAA_SENHA=sua_senha
 
 O `.env` está no `.gitignore` e nunca deve ser commitado.
 
-## Execução
+## Funcionalidades
 
 Com o ambiente virtual ativado (`source .venv/bin/activate`), escolha o
 subcomando. Todos aceitam `--no-headless`, que abre o navegador visível para
@@ -53,7 +51,7 @@ acompanhar a navegação; por padrão ele roda oculto.
 
 Cada funcionalidade gera um único PDF em `./output/`.
 
-### Turmas
+### PDF com todas as turmas ministradas
 
 ```bash
 python -m sigaa_crawler turmas --docente "João Arthur Brunet Monteiro" --periodo-inicial 2014.1
@@ -64,13 +62,13 @@ python -m sigaa_crawler turmas --docente "João Arthur Brunet Monteiro" --period
 | `--docente` | sim | Nome do docente como aparece no SIGAA (use aspas). |
 | `--periodo-inicial` | sim | Primeiro período a buscar, no formato `ano.semestre` (ex. `2014.1`). A busca vai até o período atual. |
 
-Gera uma página por período com turmas (períodos sem turma são pulados):
+O PDF tem uma página por período com turmas (períodos sem turma são pulados). Exemplo:
 
 ```
 output/turmas_joao_arthur_brunet_monteiro_2014.1_a_2026.2.pdf
 ```
 
-### Orientações PIBIC
+### PDF com as orientações PIBIC
 
 ```bash
 python -m sigaa_crawler orientacoes-pibic --periodo-inicial 2017.2
