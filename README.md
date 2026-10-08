@@ -1,11 +1,6 @@
 # sigaa-crawler
 
-Gera um PDF com as turmas ministradas por um docente no SIGAA UFCG, do período
-inicial informado até o período atual — capturando a tela real do SIGAA
-(Portal do Docente → Ensino → Consulta → Turmas), sem navegação manual.
-
-Veja [CONTEXT.md](./CONTEXT.md) para o glossário do domínio e as decisões
-já descartadas durante o design.
+Crawler para ajudar na coleta de declarações/comprovações para progressão da UFCG.
 
 ## Pré-requisitos
 
@@ -40,12 +35,14 @@ SIGAA_SENHA=sua_senha
 
 O `.env` está no `.gitignore` e nunca deve ser commitado.
 
-## Execução
+## Funcionalidades
 
 Com o ambiente virtual ativado (`source .venv/bin/activate`):
 
+### PDF com todas as turmas ministradas
+
 ```bash
-python -m sigaa_crawler --docente "João Arthur Brunet Monteiro" --periodo-inicial 2014.1
+python -m sigaa_crawler --docente "João Arthur Brunet Monteiro" --periodo-inicial 2014.1 
 ```
 
 ### Argumentos
@@ -56,23 +53,10 @@ python -m sigaa_crawler --docente "João Arthur Brunet Monteiro" --periodo-inici
 | `--periodo-inicial` | sim | Primeiro período a buscar, no formato `ano.semestre` (ex. `2014.1`). A busca vai até o período atual. |
 | `--no-headless` | não | Abre o navegador visível, para acompanhar a navegação. Por padrão o navegador roda oculto. |
 
-### Saída
-
-Um único PDF em `./output/`, com uma captura da tela de resultados por
-período que tenha turmas (períodos sem turma são pulados):
+O pdf gerado estará ./output. Exemplo:
 
 ```
 output/turmas_joao_arthur_brunet_monteiro_2014.1_a_2026.2.pdf
-```
-
-### Primeira execução
-
-Os seletores dos campos do formulário de busca em `sigaa_crawler/turmas.py`
-ainda não foram validados contra uma sessão autenticada. Na primeira vez, rode com o
-navegador visível para ver onde a automação para, caso pare:
-
-```bash
-python -m sigaa_crawler --docente "João Arthur Brunet Monteiro" --periodo-inicial 2014.1 --no-headless
 ```
 
 ### Erros comuns
