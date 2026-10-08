@@ -1,25 +1,39 @@
 # SIGAA Crawler
 
-Automação em Python que acessa o SIGAA da UFCG de forma programática (via navegador headless, não navegação manual) para extrair dados acadêmicos do Portal do Docente, começando pelas turmas ministradas pelo professor João Arthur Brunet Monteiro.
+Automação em Python que acessa o SIGAA da UFCG de forma programática (via navegador headless, não navegação manual) para reunir em PDF as evidências de atividades de um docente exigidas por uma comissão: turmas ministradas, orientações de iniciação científica e, no futuro, outras.
 
 ## Language
 
+### Sistema
+
 **SIGAA**:
-Sistema Integrado de Gestão de Atividades Acadêmicas, usado pela UFCG (`sigaa.ufcg.edu.br`). Aplicação JSF com sessão baseada em ViewState (estado por página embutido em campo oculto, não só cookies).
+Sistema Integrado de Gestão de Atividades Acadêmicas, usado pela UFCG (`sigaa.ufcg.edu.br`).
 
 **Portal do Docente**:
-Área autenticada do SIGAA onde um professor acessa suas turmas, consultas e documentos. É o perfil de acesso usado por este crawler (não Portal do Discente nem Portal do Coordenador).
+Área autenticada do SIGAA onde um professor acessa turmas, consultas e documentos. É o único perfil de acesso usado por este crawler.
 
-**Consulta de Turmas**:
-Tela em Portal do Docente → Ensino → Consulta → Turmas que permite pesquisar turmas por nome de docente. O resultado é renderizado na própria tela (não gera PDF pelo SIGAA); é a fonte de dados real usada pelo crawler.
-_Avoid_: Declaração de Disciplinas Ministradas (hipótese inicial descartada — não é esse o caminho usado; a tela real é uma consulta/listagem, não um documento emitido pelo SIGAA).
+**Funcionalidade**:
+Um tipo de evidência que o crawler sabe produzir (ex.: turmas, orientações de IC). Cada funcionalidade gera seu próprio PDF.
 
-**Declaração** (no contexto deste projeto):
-Um PDF gerado a partir da captura fiel da tela de resultados da Consulta de Turmas (não um documento reformatado). O valor está em ser reconhecível como a tela real do SIGAA, para ser aceito como evidência por uma comissão.
-_Avoid_: Relatório customizado, documento formatado (o crawler não deve gerar texto declaratório próprio).
+### Tempo
 
 **Período**:
-Identificador de semestre acadêmico no formato ano.semestre (ex.: `2026.1`), usado para filtrar turmas por intervalo de tempo.
+Semestre letivo da UFCG, identificado como `ano.número` (ex.: `2026.1`). O número não indica a época do ano e o ano não é o ano civil: 2020.1 ocorreu em 2021, e existe um período 2020.3 anterior a ele. As datas reais de cada período estão em `calendario_ufcg.csv`.
+_Avoid_: semestre, ano-período (quando se referir às datas reais).
+
+### Evidências
+
+**Relatório de Turmas**:
+Tela emitida pelo SIGAA na Consulta de Turmas (Ensino → Consulta → Turmas, opção "formato de relatório") com as turmas de um docente num período e o número de matriculados. O SIGAA não gera PDF dela; o crawler captura a tela fiel.
+_Avoid_: Declaração de Disciplinas Ministradas (é outro documento do SIGAA, não usado aqui), declaração de turmas.
+
+**Declaração de Orientação**:
+Documento oficial em PDF emitido pela Pró-Reitoria de Pós-Graduação e Pesquisa via SIGAA (Pesquisa → Declarações → Declaração de Orientações), um por projeto de pesquisa, listando os bolsistas de iniciação científica orientados e o período de cada um. Cada emissão gera um número de documento e um código de verificação novos.
+_Avoid_: certificado, declaração de projeto (a "Declaração de Membro de Projeto" é outro documento).
+
+**Orientação de IC**:
+O vínculo entre o docente e um bolsista de iniciação científica num projeto, com modalidade (ex.: PIBIC/CNPq, PIBIC/UFCG) e um intervalo de datas próprio, que não coincide com o período do projeto.
+_Avoid_: projeto (um projeto pode ter várias orientações).
 
 **Crawler**:
-O script Python deste repositório que automatiza o login e a navegação no SIGAA via navegador headless (Playwright) com seletores fixos, sem intervenção manual do mouse.
+O programa deste repositório que faz login no SIGAA e navega via navegador headless (Playwright), sem intervenção manual.
